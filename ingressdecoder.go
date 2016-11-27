@@ -16,7 +16,7 @@ var (
 
 func init() {
 	flag.StringVar(&input, "i", "", "You must specify a code")
-	flag.StringVar(&method, "m", "", "atbash/rot13/morse/fence. default fence")
+	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/morse/fence. default fence")
 	flag.Parse()
 
 	morseCode = make(map[string]string)
@@ -105,6 +105,18 @@ func rot13(d string) string {
 	return string(b)
 }
 
+func hexAtbash(d string) string {
+	var b = []byte(strings.ToLower(d))
+	for i, v := range b {
+		if v >= 97 && v <= 102 {
+			b[i] = (97 + 102) - v
+		} else if v >= 48 && v <= 57 {
+			b[i] = (48 + 57) - v
+		}
+	}
+	return string(b)
+}
+
 func fence(d string) {
 	var l = len(d)
 	fmt.Println("lenth =", l)
@@ -123,6 +135,8 @@ func main() {
 	switch strings.ToLower(method) {
 	case "atbash":
 		fmt.Println(atbash(input))
+	case "hexatbash":
+		fmt.Println(hexAtbash(input))
 	case "rot13":
 		fmt.Println(rot13(input))
 	case "morse":
