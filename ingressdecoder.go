@@ -16,7 +16,7 @@ var (
 
 func init() {
 	flag.StringVar(&input, "i", "", "You must specify a code")
-	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/morse/fence. default fence")
+	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/fence. default fence")
 	flag.Parse()
 
 	morseCode = make(map[string]string)
@@ -58,7 +58,7 @@ func init() {
 	morseCode["9"] = "----."
 }
 
-func morse(d string) string {
+func fromMorse(d string) string {
 	var ds = strings.Split(d, "/")
 	var bs string
 	for _, s := range ds {
@@ -68,6 +68,21 @@ func morse(d string) string {
 			}
 		}
 	}
+	return bs
+}
+
+func toMorse(d string) string {
+	var bs string
+	for _, s := range d {
+		bs = fmt.Sprintf("%s/%s", bs, morseCode[s])
+	}
+	return bs
+}
+
+func swapMorse(d string) string {
+	bs := strings.Replace(d, ".", ",", -1)
+	bs := strings.Replace(bs, "-", "."-1)
+	bs := strings.Replace(bs, ",", "-", -1)
 	return bs
 }
 
@@ -139,8 +154,18 @@ func main() {
 		fmt.Println(hexAtbash(input))
 	case "rot13":
 		fmt.Println(rot13(input))
-	case "morse":
-		fmt.Println(morse(input))
+	case "frommorse":
+		fmt.Println(fromMorse(input))
+	case "tomorse":
+		fmt.Println(toMorse(input))
+	case "swapmorse":
+		fmt.Println(
+			fromMorse(
+				swapMorse(
+					toMorse(input),
+				),
+			),
+		)
 	case "fence":
 		fallthrough
 	default:
