@@ -74,15 +74,15 @@ func fromMorse(d string) string {
 func toMorse(d string) string {
 	var bs string
 	for _, s := range d {
-		bs = fmt.Sprintf("%s/%s", bs, morseCode[s])
+		bs = fmt.Sprintf("%s/%s", bs, morseCode[string(s)])
 	}
 	return bs
 }
 
 func swapMorse(d string) string {
 	bs := strings.Replace(d, ".", ",", -1)
-	bs := strings.Replace(bs, "-", "."-1)
-	bs := strings.Replace(bs, ",", "-", -1)
+	bs = strings.Replace(bs, "-", ".", -1)
+	bs = strings.Replace(bs, ",", "-", -1)
 	return bs
 }
 
