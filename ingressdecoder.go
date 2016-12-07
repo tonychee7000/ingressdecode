@@ -16,7 +16,7 @@ var (
 
 func init() {
 	flag.StringVar(&input, "i", "", "You must specify a code")
-	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/fence. default fence")
+	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/keymirror/fence. default fence")
 	flag.Parse()
 
 	morseCode = make(map[string]string)
