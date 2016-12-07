@@ -56,6 +56,31 @@ func init() {
 	morseCode["7"] = "--..."
 	morseCode["8"] = "---.."
 	morseCode["9"] = "----."
+
+}
+
+func keyboardMirror(d string) string {
+	var keyboard = []string{
+		"!@#$%^&*()",
+		"1234567890",
+		"QWERTYUIOP",
+		"qwertyuiop",
+		"ASDFGHJKL:",
+		"asdfghjkl;",
+		"ZXCVBNM<>?",
+		"zxcvbnm,./",
+	}
+	var bs string
+	for _, s := range d {
+		for _, v1 := range keyboard {
+			for i, v2 := range v1 {
+				if s == v2 {
+					bs += string(v1[9-i])
+				}
+			}
+		}
+	}
+	return bs
 }
 
 func fromMorse(d string) string {
@@ -166,6 +191,8 @@ func main() {
 				),
 			),
 		)
+	case "keymirror":
+		fmt.Println(keyboardMirror(input))
 	case "fence":
 		fallthrough
 	default:
