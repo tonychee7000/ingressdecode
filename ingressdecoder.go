@@ -16,7 +16,7 @@ var (
 
 func init() {
 	flag.StringVar(&input, "i", "", "You must specify a code")
-	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/keymirror/fence. default fence")
+	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/keymirror/fence/index/indexaj. \ndefault fence")
 	flag.Parse()
 
 	morseCode = make(map[string]string)
@@ -57,6 +57,30 @@ func init() {
 	morseCode["8"] = "---.."
 	morseCode["9"] = "----."
 
+}
+
+func letterIndexAToJ(d string) string {
+	var bs = []byte(d)
+	for i, s := range bs {
+		if s >= 65 && s <= 74 {
+			bs[i] = s - 65 + 48
+		} else if s >= 97 && s <= 106 {
+			bs[i] = s - 97 + 48
+		}
+	}
+	return string(bs)
+}
+
+func letterIndexFull(d string) string {
+	var bs string
+	for _, s := range d {
+		if s >= 65 && s <= 90 {
+			bs = fmt.Sprintf("%s%02d", bs, s-65)
+		} else if s >= 97 && s <= 122 {
+			bs = fmt.Sprintf("%s%02d", bs, s-97)
+		}
+	}
+	return bs
 }
 
 func keyboardMirror(d string) string {
@@ -193,6 +217,10 @@ func main() {
 		)
 	case "keymirror":
 		fmt.Println(keyboardMirror(input))
+	case "indexaj":
+		fmt.Println(letterIndexAToJ(input))
+	case "index":
+		fmt.Println(letterIndexFull(input))
 	case "fence":
 		fallthrough
 	default:
