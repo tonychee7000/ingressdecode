@@ -5,6 +5,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"regexp"
 	"strings"
 )
 
@@ -16,7 +20,7 @@ var (
 
 func init() {
 	flag.StringVar(&input, "i", "", "You must specify a code")
-	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/keymirror/fence/index/indexaj. \ndefault fence")
+	flag.StringVar(&method, "m", "", "atbash/hexatbash/rot13/frommorse/tomorse/swapmorse/keymirror/fence/index/indexaj/keywords. \ndefault fence")
 	flag.Parse()
 
 	morseCode = make(map[string]string)
@@ -195,6 +199,45 @@ func fence(d string) {
 	}
 }
 
+func retriveKeywords() ([]string, error) {
+	const URL = "https://raw.githubusercontent.com/ingresscodes/keywords/master/keywords.txt"
+	resp, err := http.Get(URL)
+	if err != nil {
+		return nil, err
+	}
+
+	var b []byte
+	b, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	resp.Body.Close()
+
+	bs := string(b)
+	bs = strings.Replace(bs, "\r", "", -1)
+	return strings.Split(bs, "\n"), nil
+}
+
+func findKeywords(d string) []string {
+	ks, err := retriveKeywords()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "\tError while retrive key words: %v\n", err)
+		return nil
+	}
+
+	if len(regexp.MustCompile("[0-9]").FindAllString(d, -1)) != 5 {
+		return nil
+	}
+	reg := regexp.MustCompile(fmt.Sprintf("^[%s]{%d}$", d, len(d)-10))
+	var ds = make([]string, 0)
+	for _, v := range ks {
+		if reg.MatchString(v) {
+			ds = append(ds, v)
+		}
+	}
+	return ds
+}
+
 func main() {
 	switch strings.ToLower(method) {
 	case "atbash":
@@ -221,6 +264,13 @@ func main() {
 		fmt.Println(letterIndexAToJ(input))
 	case "index":
 		fmt.Println(letterIndexFull(input))
+	case "keywords":
+		d := findKeywords(input)
+		if d != nil {
+			for _, v := range d {
+				fmt.Println(v)
+			}
+		}
 	case "fence":
 		fallthrough
 	default:
